@@ -1,0 +1,171 @@
+DROP DATABASE IF EXISTS comp3005;
+Create Database comp3005;
+use comp3005;
+
+DROP TABLE IF EXISTS Role;
+CREATE TABLE Role(
+role VARCHAR(50) NOT NULL,
+CONSTRAINT PK_Role PRIMARY KEY (role)
+);
+
+DROP TABLE IF EXISTS User_t;
+CREATE TABLE User_t(
+id INT NOT NULL AUTO_INCREMENT,
+name VARCHAR(50) NOT NULL,
+email VARCHAR(100),
+phone VARCHAR(100),
+role VARCHAR(50) NOT NULL,
+CONSTRAINT UC_USER UNIQUE (name),
+CONSTRAINT PK_USER_T PRIMARY KEY (id),
+FOREIGN KEY (role) REFERENCES role(role)
+
+);
+
+DROP TABLE IF EXISTS Store;
+CREATE TABLE Store(
+id INT NOT NULL AUTO_INCREMENT,
+store_name VARCHAR(50) NOT NULL,
+owner_id INT NOT NULL,
+CONSTRAINT PK_STORE_T PRIMARY KEY (id),
+CONSTRAINT UC_STORE UNIQUE (store_name),
+FOREIGN KEY (owner_id) REFERENCES User_t(id)
+);
+
+DROP TABLE IF EXISTS Address;
+CREATE TABLE Address(
+id INT NOT NULL AUTO_INCREMENT,
+street_num VARCHAR(50) NOT NULL,
+street_name VARCHAR(50) NOT NULL,
+postal_code VARCHAR(32) NOT NULL,
+address_type VARCHAR(50) NOT NULL,
+CONSTRAINT PK_ADDRESS_T PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS order_t;
+CREATE TABLE order_t(
+id INT NOT NULL AUTO_INCREMENT,
+tracking VARCHAR(50) NOT NULL,
+user_id INT NOT NULL,
+CONSTRAINT PK_ORDER_T PRIMARY KEY (id),
+FOREIGN KEY (user_id) REFERENCES User_t(id)
+);
+
+DROP TABLE IF EXISTS publisher;
+CREATE TABLE publisher(
+id INT NOT NULL AUTO_INCREMENT,
+name VARCHAR(100) NOT NULL,
+email VARCHAR(100) NOT NULL,
+phone VARCHAR(100) NOT NULL,
+bank_account VARCHAR(100) NOT NULL,
+CONSTRAINT UC_PUBLISHER UNIQUE (name,email,phone,bank_account),
+CONSTRAINT PK_PUBLISHER_T PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS genre;
+CREATE TABLE genre(
+id INT NOT NULL AUTO_INCREMENT,
+name VARCHAR(100) NOT NULL,
+CONSTRAINT PK_GENRE_T PRIMARY KEY (id),
+CONSTRAINT UC_PUBLISHER UNIQUE (name)
+);
+
+DROP TABLE IF EXISTS book;
+CREATE TABLE book(
+id INT NOT NULL AUTO_INCREMENT,
+name VARCHAR(100) NOT NULL,
+price DECIMAL(10,2) NOT NULL,
+ISBN VARCHAR(100) NOT NULL,
+genre_id int NOT NULL,
+nop INT NOT NULL,
+publisher_id INT NOT NULL,
+CONSTRAINT PK_BOOK_T PRIMARY KEY (id),
+CONSTRAINT UC_PUBLISHER UNIQUE (name),
+FOREIGN KEY (publisher_id) REFERENCES publisher(id),
+FOREIGN KEY (genre_id) REFERENCES genre(id)
+);
+
+
+
+DROP TABLE IF EXISTS warehouse;
+CREATE TABLE warehouse(
+id INT NOT NULL AUTO_INCREMENT,
+name VARCHAR(100) NOT NULL,
+phone VARCHAR(100) NOT NULL,
+CONSTRAINT UC_WAREHOUSE UNIQUE (name,phone),
+CONSTRAINT PK_WAREHOUSE_T PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS author;
+CREATE TABLE author(
+id INT NOT NULL AUTO_INCREMENT,
+name VARCHAR(100) NOT NULL,
+CONSTRAINT UC_AUTHOR UNIQUE (name),
+CONSTRAINT PK_AUTHOR_T PRIMARY KEY (id)
+);
+
+
+DROP TABLE IF EXISTS user_address;
+CREATE TABLE user_address(
+address_id INT NOT NULL,
+user_id INT NOT NULL,
+FOREIGN KEY (address_id) REFERENCES Address(id),
+FOREIGN KEY (user_id) REFERENCES User_t(id)
+);
+
+DROP TABLE IF EXISTS store_address;
+CREATE TABLE store_address(
+address_id INT NOT NULL,
+store_id INT NOT NULL,
+FOREIGN KEY (address_id) REFERENCES Address(id),
+FOREIGN KEY (store_id) REFERENCES Store(id)
+);
+
+DROP TABLE IF EXISTS publisher_address;
+CREATE TABLE publisher_address(
+address_id INT NOT NULL,
+publisher_id INT NOT NULL,
+FOREIGN KEY (address_id) REFERENCES Address(id),
+FOREIGN KEY (publisher_id) REFERENCES publisher(id)
+);
+
+DROP TABLE IF EXISTS warehouse_address;
+CREATE TABLE warehouse_address(
+address_id INT NOT NULL,
+warehouse_id INT NOT NULL,
+FOREIGN KEY (address_id) REFERENCES Address(id),
+FOREIGN KEY (warehouse_id) REFERENCES warehouse(id)
+);
+
+DROP TABLE IF EXISTS order_book;
+CREATE TABLE order_book(
+order_id INT NOT NULL,
+book_id INT NOT NULL,
+quantity INT NOT NULL,
+FOREIGN KEY (order_id) REFERENCES order_t(id),
+FOREIGN KEY (book_id) REFERENCES book(id)
+);
+
+DROP TABLE IF EXISTS book_warehouse;
+CREATE TABLE book_warehouse(
+warehouse_id INT NOT NULL,
+book_id INT NOT NULL,
+quantity INT NOT NULL,
+FOREIGN KEY (warehouse_id) REFERENCES warehouse(id),
+FOREIGN KEY (book_id) REFERENCES book(id)
+);
+
+DROP TABLE IF EXISTS book_author;
+CREATE TABLE book_author(
+author_id INT NOT NULL,
+book_id INT NOT NULL,
+FOREIGN KEY (author_id) REFERENCES author(id),
+FOREIGN KEY (book_id) REFERENCES book(id)
+);
+
+DROP TABLE IF EXISTS store_book;
+CREATE TABLE store_book(
+store_id INT NOT NULL,
+book_id INT NOT NULL,
+FOREIGN KEY (store_id) REFERENCES store(id),
+FOREIGN KEY (book_id) REFERENCES book(id)
+);
